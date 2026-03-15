@@ -30,43 +30,47 @@ api.interceptors.response.use(
   }
 );
 
-// API methods
 export const authAPI = {
   register: (email: string, password: string, fullName: string) =>
     api.post('/auth/register', { email, password, fullName }),
-  
+
   login: (email: string, password: string) =>
     api.post('/auth/login', { email, password }),
 };
 
 export const caloriesAPI = {
+  // sends ?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
   getAll: (startDate?: string, endDate?: string) =>
     api.get('/calories', { params: { startDate, endDate } }),
-  
+
   create: (data: any) =>
     api.post('/calories', data),
-  
+
+  update: (id: string, data: any) =>
+    api.put(`/calories/${id}`, data),
+
   delete: (id: string) =>
     api.delete(`/calories/${id}`),
 };
 
 export const workoutsAPI = {
-  getAll: () =>
-    api.get('/workouts'),
-  
+  // NOW sends ?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD — this was missing before
+  getAll: (startDate?: string, endDate?: string) =>
+    api.get('/workouts', { params: { startDate, endDate } }),
+
   create: (data: any) =>
     api.post('/workouts', data),
-  
+
+  update: (id: string, data: any) =>
+    api.put(`/workouts/${id}`, data),
+
   delete: (id: string) =>
     api.delete(`/workouts/${id}`),
 };
 
 export const calendarAPI = {
-  getAll: () =>
-    api.get('/calendar'),
-  
-  create: (data: any) =>
-    api.post('/calendar', data),
+  getAll: () => api.get('/calendar'),
+  create: (data: any) => api.post('/calendar', data),
 };
 
 export const chatbotAPI = {

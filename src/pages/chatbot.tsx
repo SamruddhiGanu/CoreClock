@@ -33,18 +33,21 @@ export default function Chatbot() {
     
     if (!input.trim() || loading) return;
 
+    const userInput = input.trim();
     const userMessage: Message = {
       role: 'user',
-      content: input,
+      content: userInput,
       timestamp: new Date()
     };
 
-    setMessages([...messages, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
     setLoading(true);
 
     try {
-      const response = await chatbotAPI.sendMessage(input);
+      console.log('Sending message:', userInput);
+      const response = await chatbotAPI.sendMessage(userInput);
+      console.log('Response received:', response.data);
       
       const assistantMessage: Message = {
         role: 'assistant',
@@ -53,12 +56,24 @@ export default function Chatbot() {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error('Error sending message:', error);
+    } catch (error: any) {
+      console.error('Chatbot error:', error);
+      
+      let errorMsg = 'Sorry, I encountered an error. ';
+      
+      if (error.response?.status === 500) {
+        errorMsg += 'The AI service may be unavailable. Please make sure Ollama is running.';
+      } else if (error.response?.status === 401) {
+        errorMsg += 'Please login again.';
+      } else if (error.message?.includes('Network Error')) {
+        errorMsg += 'Cannot connect to the backend. Make sure it\'s running.';
+      } else {
+        errorMsg += 'Please try again!';
+      }
       
       const errorMessage: Message = {
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again!',
+        content: errorMsg,
         timestamp: new Date()
       };
 
@@ -66,6 +81,17 @@ export default function Chatbot() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleQuickQuestion = (question: string) => {
+    setInput(question);
+    // Auto-submit after setting the input
+    setTimeout(() => {
+      const form = document.querySelector('form');
+      if (form) {
+        form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+      }
+    }, 100);
   };
 
   const quickQuestions = [
@@ -171,7 +197,7 @@ export default function Chatbot() {
                 {quickQuestions.map((question, index) => (
                   <button
                     key={index}
-                    onClick={() => setInput(question)}
+                    onClick={() => handleQuickQuestion(question)}
                     className="text-left px-3 py-2 backdrop-blur-xl bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-gray-300 transition-all"
                   >
                     {question}

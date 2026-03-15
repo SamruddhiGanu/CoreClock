@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import TimerSetup from '@/components/TimerSetup';
 import ActiveTimer from '@/components/ActiveTimer';
@@ -5,6 +6,8 @@ import CompletionScreen from '@/components/CompletionScreen';
 import { useTimer } from '@/hooks/useTimer';
 
 type Phase = 'setup' | 'active' | 'complete';
+
+
 
 const Index = () => {
   const [phase, setPhase] = useState<Phase>('setup');
