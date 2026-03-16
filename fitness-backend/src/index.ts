@@ -10,8 +10,8 @@ const app = express();
 app.use(cors({
 origin: [
 'http://localhost:5173',                        // local dev
-'https://core-clock.vercel.app/',                  // your Vercel URL
-/.vercel.app$/                                // any Vercel preview URL
+'https://core-clock.vercel.app',                  // your Vercel URL
+/\.vercel.app$/                                // any Vercel preview URL
 ],
 credentials: true
 }));
@@ -27,4 +27,8 @@ app.use('/api/workouts', workoutsRouter);
 app.use('/api/calories', caloriesRouter);
 app.use('/api/auth',     authRouter);
 
-app.listen(process.env.PORT || 3000, () => console.log('Server running on port 3000'));
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
